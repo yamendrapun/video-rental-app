@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
 import Like from './common/like'
+import Pagination from './common/pagination'
 import { getMovies } from '../services/fakeMovieService'
+import { paginate } from '../utils/paginate'
 
 export default function Movies() {
   const [movies, setMovies] = useState(getMovies())
+  const [pageSize, setPageSize] = useState(4)
+  const [currentPage, setCurrentPage] = useState(1)
 
   function handleLike(movie) {
     const newMovies = [...movies]
@@ -12,6 +16,12 @@ export default function Movies() {
     newMovies[index].liked = !newMovies[index].liked
     setMovies(newMovies)
   }
+
+  function handlePageChange(page) {
+    setCurrentPage(page)
+  }
+
+  const paginatedMovies = paginate(movies, currentPage, pageSize)
 
   return (
     <React.Fragment>
@@ -32,7 +42,7 @@ export default function Movies() {
               </tr>
             </thead>
             <tbody>
-              {movies.map((movie, i) => (
+              {paginatedMovies.map((movie, i) => (
                 <tr key={movie._id}>
                   <th>{movie.title}</th>
                   <th>{movie.genre.name}</th>
@@ -58,6 +68,12 @@ export default function Movies() {
               ))}
             </tbody>
           </table>
+          <Pagination
+            itemsCount={movies.length}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
         </React.Fragment>
       )}
     </React.Fragment>
