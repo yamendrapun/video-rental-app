@@ -23,6 +23,7 @@ const Movies = () => {
     newMovies[index].liked = !newMovies[index].liked
     setMovies(newMovies)
   }
+
   function handleDelete(movie) {
     setMovies(movies.filter((m) => m._id !== movie._id))
   }
@@ -40,14 +41,20 @@ const Movies = () => {
     setSortColumn(sortColumn)
   }
 
-  const filtered =
-    selectedGenre && selectedGenre._id
-      ? movies.filter((m) => m.genre._id === selectedGenre._id)
-      : movies
+  function getPageData() {
+    const filtered =
+      selectedGenre && selectedGenre._id
+        ? movies.filter((m) => m.genre._id === selectedGenre._id)
+        : movies
 
-  const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order])
+    const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order])
 
-  const paginatedMovies = paginate(sorted, currentPage, pageSize)
+    const paginatedMovies = paginate(sorted, currentPage, pageSize)
+
+    return { totalCount: filtered.length, data: paginatedMovies }
+  }
+
+  const { totalCount, data } = getPageData()
 
   return (
     <div className='row'>
@@ -63,16 +70,16 @@ const Movies = () => {
           <p>There are no movies to show in database.</p>
         ) : (
           <React.Fragment>
-            <p>Showing {filtered.length} movies in the database.</p>
+            <p>Showing {totalCount} movies in the database.</p>
             <MoviesTable
-              movies={paginatedMovies}
+              movies={data}
               sortColumn={sortColumn}
               onLike={handleLike}
               onDelete={handleDelete}
               onSort={handleSort}
             />
             <Pagination
-              itemsCount={filtered.length}
+              itemsCount={totalCount}
               pageSize={pageSize}
               currentPage={currentPage}
               onPageChange={handlePageChange}
