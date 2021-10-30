@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import ListGroup from './common/listGroup'
 import Pagination from './common/pagination'
+import MoviesTable from './moviesTable'
 import { getMovies } from '../services/fakeMovieService'
 import { getGenres } from '../services/fakeGenreService'
 import { paginate } from '../utils/paginate'
-import { mapValues } from 'lodash'
-import MoviesTable from './moviesTable'
+import _ from 'lodash'
 
 export default function Movies() {
   const [movies, setMovies] = useState(getMovies())
-  let allGenres = [{ name: 'All Genres' }, ...getGenres()]
+  let allGenres = [{ _id: '', name: 'All Genres' }, ...getGenres()]
   const [genres, setGenres] = useState(allGenres)
   const [selectedGenre, setSelectedGenre] = useState()
   const [pageSize, setPageSize] = useState(4)
   const [currentPage, setCurrentPage] = useState(1)
+  const [sortColumn, setSortColumn] = useState({ path: 'title', order: 'asc' })
 
   function handleLike(movie) {
     const newMovies = [...movies]
@@ -35,12 +36,18 @@ export default function Movies() {
     setCurrentPage(1)
   }
 
+  function handleSort(sortColumn) {
+    setSortColumn(sortColumn)
+  }
+
   const filtered =
     selectedGenre && selectedGenre._id
       ? movies.filter((m) => m.genre._id === selectedGenre._id)
       : movies
 
-  const paginatedMovies = paginate(filtered, currentPage, pageSize)
+  const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order])
+
+  const paginatedMovies = paginate(sorted, currentPage, pageSize)
 
   return (
     <div className='row'>
@@ -59,8 +66,10 @@ export default function Movies() {
             <p>Showing {filtered.length} movies in the database.</p>
             <MoviesTable
               movies={paginatedMovies}
+              sortColumn={sortColumn}
               onLike={handleLike}
               onDelete={handleDelete}
+              onSort={handleSort}
             />
             <Pagination
               itemsCount={filtered.length}
