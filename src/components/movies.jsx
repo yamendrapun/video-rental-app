@@ -7,7 +7,7 @@ import { getGenres } from '../services/fakeGenreService'
 import { paginate } from '../utils/paginate'
 import _ from 'lodash'
 
-export default function Movies() {
+const Movies = () => {
   const [movies, setMovies] = useState(getMovies())
   let allGenres = [{ _id: '', name: 'All Genres' }, ...getGenres()]
   const [genres, setGenres] = useState(allGenres)
@@ -83,3 +83,5 @@ export default function Movies() {
     </div>
   )
 }
+
+export default Movies
