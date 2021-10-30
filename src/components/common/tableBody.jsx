@@ -1,8 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-const TableBody = (props) => {
-  const { data, columns } = props
+const TableBody = ({ data, columns }) => {
   function renderCell(item, column) {
     if (column.content) return column.content(item)
 
