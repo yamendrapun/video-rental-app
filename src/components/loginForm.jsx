@@ -6,10 +6,10 @@ const LoginForm = () => {
   const [account, setAccount] = useState({ username: '', password: '' })
   const [errors, setErrors] = useState({})
 
-  const schema = Joi.object({
+  const schema = {
     username: Joi.string().required().label('Username'),
     password: Joi.string().required().label('Password'),
-  })
+  }
 
   function validate() {
     const options = {
@@ -35,12 +35,10 @@ const LoginForm = () => {
   }
 
   function validateProperty({ name, value }) {
-    if (name === 'username') {
-      if (value.trim() === '') return 'Username is required.'
-    }
-    if (name === 'password') {
-      if (value.trim() === '') return 'Password is required.'
-    }
+    const obj = { [name]: value }
+    const fieldSchema = { [name]: schema[name] }
+    const { error } = Joi.validate(obj, fieldSchema)
+    return error ? error.details[0].message : null
   }
 
   function handleChange({ currentTarget: input }) {
