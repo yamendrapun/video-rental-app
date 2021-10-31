@@ -3,9 +3,25 @@ import Input from './common/input'
 
 const LoginForm = () => {
   const [account, setAccount] = useState({ username: '', password: '' })
+  const [errors, setErrors] = useState({})
+
+  function validate() {
+    const errors = {}
+
+    const { username, password } = account
+    if (username.trim() === '') errors.username = 'Username is required.'
+    if (password.trim() === '') errors.password = 'Password is required.'
+
+    return Object.keys(errors).length == 0 ? null : errors
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
+
+    let newErrors = validate()
+    console.log(newErrors)
+    setErrors(newErrors)
+    if (errors) return
 
     // Call the server
     console.log('Submitted')
