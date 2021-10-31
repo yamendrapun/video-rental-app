@@ -1,18 +1,26 @@
 import React, { useState } from 'react'
+import Joi, { schema } from 'joi-browser'
 import Input from './common/input'
 
 const LoginForm = () => {
   const [account, setAccount] = useState({ username: '', password: '' })
   const [errors, setErrors] = useState({})
 
+  const schema = Joi.object({
+    username: Joi.string().required().label('Username'),
+    password: Joi.string().required().label('Password'),
+  })
+
   function validate() {
-    const errors = {}
+    const options = {
+      abortEarly: false,
+    }
+    const { error } = Joi.validate(account, schema, options)
+    if (!error) return null
 
-    const { username, password } = account
-    if (username.trim() === '') errors.username = 'Username is required.'
-    if (password.trim() === '') errors.password = 'Password is required.'
-
-    return Object.keys(errors).length == 0 ? null : errors
+    const newErrors = {}
+    for (let item of error.details) newErrors[item.path[0]] = item.message
+    return newErrors
   }
 
   function handleSubmit(e) {
