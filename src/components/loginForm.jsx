@@ -26,10 +26,25 @@ const LoginForm = () => {
     console.log('Submitted')
   }
 
+  function validateProperty({ name, value }) {
+    if (name === 'username') {
+      if (value.trim() === '') return 'Username is required.'
+    }
+    if (name === 'password') {
+      if (value.trim() === '') return 'Password is required.'
+    }
+  }
+
   function handleChange({ currentTarget: input }) {
+    let newErrors = { ...errors }
+    const errorMessage = validateProperty(input)
+    if (errorMessage) newErrors[input.name] = errorMessage
+    else delete newErrors[input.name]
+
     let newAccount = { ...account }
     newAccount[input.name] = input.value
     setAccount(newAccount)
+    setErrors(newErrors)
   }
 
   return (
