@@ -19,8 +19,7 @@ const LoginForm = () => {
     e.preventDefault()
 
     let newErrors = validate()
-    console.log(newErrors)
-    setErrors(newErrors)
+    setErrors(newErrors || {})
     if (errors) return
 
     // Call the server
@@ -42,12 +41,14 @@ const LoginForm = () => {
           value={account.username}
           label='Username'
           onChange={handleChange}
+          error={errors.username}
         />
         <Input
           name='password'
           value={account.password}
           label='Password'
           onChange={handleChange}
+          error={errors.password}
         />
         <button className='btn btn-primary'>Login</button>
       </form>
