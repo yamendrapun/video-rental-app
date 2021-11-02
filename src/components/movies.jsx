@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import _ from 'lodash'
+import { Link } from 'react-router-dom'
 import ListGroup from './common/listGroup'
 import Pagination from './common/pagination'
 import MoviesTable from './moviesTable'
 import { getMovies } from '../services/fakeMovieService'
 import { getGenres } from '../services/fakeGenreService'
 import { paginate } from '../utils/paginate'
-import _ from 'lodash'
 
 const Movies = () => {
   const [movies, setMovies] = useState(getMovies())
@@ -66,6 +67,13 @@ const Movies = () => {
         />
       </div>
       <div className='col'>
+        <Link
+          to='/movies/new'
+          className='btn btn-primary'
+          style={{ marginBottom: 20 }}
+        >
+          New Movie
+        </Link>
         {movies.length === 0 ? (
           <p>There are no movies to show in database.</p>
         ) : (
