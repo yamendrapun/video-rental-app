@@ -6,7 +6,7 @@ const NavBar = () => {
     <nav className='navbar navbar-expand-lg navbar-light bg-light'>
       <div className='container-fluid'>
         <Link className='navbar-brand' to='/'>
-          Video Rental App
+          VRA
         </Link>
         <button
           className='navbar-toggler'
