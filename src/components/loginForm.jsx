@@ -1,84 +1,38 @@
-import React, { useState } from 'react'
-import Joi, { schema } from 'joi-browser'
-import Input from './common/input'
+import React from "react";
+import Joi from "joi-browser";
+import Form from "./common/form";
+class LoginForm extends Form {
+  state = {
+    data: { username: "", password: "" },
+    errors: {}
+  };
 
-const LoginForm = () => {
-  const [account, setAccount] = useState({ username: '', password: '' })
-  const [errors, setErrors] = useState({})
+  schema = {
+    username: Joi.string()
+      .required()
+      .label("Username"),
+    password: Joi.string()
+      .required()
+      .label("Password")
+  };
 
-  const schema = {
-    username: Joi.string().required().label('Username'),
-    password: Joi.string().required().label('Password'),
-  }
-
-  function validate() {
-    const options = {
-      abortEarly: false,
-    }
-    const { error } = Joi.validate(account, schema, options)
-    if (!error) return null
-
-    const newErrors = {}
-    for (let item of error.details) newErrors[item.path[0]] = item.message
-    return newErrors
-  }
-
-  function validateProperty({ name, value }) {
-    const obj = { [name]: value }
-    const fieldSchema = { [name]: schema[name] }
-    const { error } = Joi.validate(obj, fieldSchema)
-    return error ? error.details[0].message : null
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault()
-
-    let newErrors = validate()
-    setErrors(newErrors || {})
-    if (errors) return
-
+  doSubmit = () => {
     // Call the server
-    console.log('Submitted')
+    console.log("Submitted");
+  };
+
+  render() {
+    return (
+      <div>
+        <h1>Login</h1>
+        <form onSubmit={this.handleSubmit}>
+          {this.renderInput("username", "Username")}
+          {this.renderInput("password", "Password", "password")}
+          {this.renderButton("Login")}
+        </form>
+      </div>
+    );
   }
-
-  function handleChange({ currentTarget: input }) {
-    let newErrors = { ...errors }
-    const errorMessage = validateProperty(input)
-    if (errorMessage) newErrors[input.name] = errorMessage
-    else delete newErrors[input.name]
-
-    let newAccount = { ...account }
-    newAccount[input.name] = input.value
-    setAccount(newAccount)
-    setErrors(newErrors)
-  }
-
-  return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <Input
-          name='username'
-          type='text'
-          value={account.username}
-          label='Username'
-          onChange={handleChange}
-          error={errors.username}
-        />
-        <Input
-          name='password'
-          type='password'
-          value={account.password}
-          label='Password'
-          onChange={handleChange}
-          error={errors.password}
-        />
-        <button disabled={validate()} className='btn btn-primary'>
-          Login
-        </button>
-      </form>
-    </div>
-  )
 }
 
-export default LoginForm
+export default LoginForm;
